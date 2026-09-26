@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multiplication Table</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #eee;
+        }
+
+        .calculator {
+            width: 350px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: white;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        button {
+            background-color: blue;
+            color: white;
+            border: none;
+        }
+
+        #result {
+            font-size: 22px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator">
+
+        <h1>Calculator</h1>
+
+        <input type="number" id="num" placeholder="Enter number">
+
+
+        <br>
+
+
+        <button onclick="generate()">Generate</button>
+
+        <div id="result"></div>
+
+    </div>
+
+    <script>
+        function generate() {
+
+            let num = Number(document.getElementById("num").value);
+
+            let output = "";
+
+            for (let i = 1; i <= 10; i++) {
+
+                output +=
+                    `${number} * ${i} = ${number * i}<br>`;
+            }
+
+            document.getElementById("result").innerHTML =
+                output;
+        }
+    </script>
+</body>
+</html>

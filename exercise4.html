@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #eee;
+        }
+
+        .calculator {
+            width: 350px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: white;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        button {
+            background-color: blue;
+            color: white;
+            border: none;
+        }
+
+        #result {
+            font-size: 22px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator">
+
+        <h1>Calculator</h1>
+
+        <input type="number" id="num1" placeholder="First number">
+
+        <input type="number" id="num2" placeholder="Second number">
+
+        <br>
+
+        <select id="operator">
+            <option value="+">Addition</option>
+            <option value="-">Subtraction</option>
+            <option value="*">Multiplication</option>
+            <option value="/">Division</option>
+        </select>
+
+        <button onclick="calculate()">Calculate</button>
+
+        <p id="result"></p>
+
+    </div>
+
+    <script>
+        function calculate() {
+
+            let num1 = Number(document.getElementById("num1").value);
+            let num2 = Number(document.getElementById("num2").value);
+
+            let operator = document.getElementById("operator").value;
+
+            let result;
+
+            switch (operator) {
+
+                case "+":
+                    result = num1 + num2;
+                    break;
+
+                case "-":
+                    result = num1 - num2;
+                    break;
+
+                case "*":
+                    result = num1 * num2;
+                    break;
+
+                case "/":
+                    result = num1 / num2;
+                    break;
+            }
+
+            document.getElementById("result").innerHTML =
+                "Result = " + result;
+        }
+    </script>
+</body>
+</html>

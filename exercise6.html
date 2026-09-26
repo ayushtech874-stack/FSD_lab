@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Performance</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: purple;
+            color: white;
+            border: none;
+        }
+
+        #table {
+            margin-top: 20px;
+            font-size: 20px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Performance</h1>
+    <button onclick="calculate()">
+        Calculate
+    </button>
+
+    <br><br><br><br><br>
+    <div id="result"></div>
+
+    <script>
+
+        function calculate() {
+
+            let marks = [50,24,60,85,73]
+            let sum =0;
+            let largest = marks[0];
+            let smallest = marks[0];
+            for (let i = 0; i < marks.length; i++) {
+
+                sum += marks[i];
+                if(marks[i]>largest)
+            {
+                largest = marks[i];
+            }
+            else if(marks[i]<smallest)
+            {
+                smallest = marks[i]
+            }
+            }
+            let avg = sum/marks.length;
+            document.getElementById("result").innerHTML = `Total marks = ${sum} <br>
+            Least marks = ${smallest}<br>
+            Largest marks = ${largest}<br>
+            Average marks = ${avg}<br>` 
+           
+
+        }
+
+    </script>
+
+</body>
+</html>
