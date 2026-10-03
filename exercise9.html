@@ -1,0 +1,103 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do List</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #eee;
+        }
+
+        .calculator {
+            width: 350px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: white;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+        }
+
+        button {
+            background-color: blue;
+            color: white;
+            border: none;
+        }
+
+        #result {
+            font-size: 22px;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .task-toggle {
+            padding: 0;
+        }
+
+        .delete-task {
+            background-color: #f1274c;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="List">
+        <h1>To-Do List</h1>
+
+        <input type="text" id="task-input" placeholder="Enter Task" aria-label="Enter task">
+        <button type="button" id="add-task">Add</button>
+
+        <ol id="task-list" aria-live="polite"></ol>
+    </div>
+
+    <script>
+        let taskInput = document.getElementById('task-input');
+        let addTaskButton = document.getElementById('add-task');
+        let taskList = document.getElementById('task-list');
+
+        addTaskButton.addEventListener('click', () => {
+            const taskText = taskInput.value.trim();
+            if (!taskText) {
+                alert('Please enter a task.');
+                return;
+            }
+
+            const listItem = document.createElement('li');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'task-toggle';
+            checkbox.setAttribute('aria-label', `Mark ${taskText} complete`);
+            checkbox.addEventListener('change', () => {
+                listItem.classList.toggle('completed', checkbox.checked);
+            });
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.className = 'delete-task';
+            deleteButton.textContent = 'Delete';
+            deleteButton.setAttribute('aria-label', `Delete ${taskText}`);
+            deleteButton.addEventListener('click', () => {
+                listItem.remove();
+            });
+            listItem.append(checkbox, document.createTextNode(` ${taskText} `), deleteButton);
+            taskList.appendChild(listItem);
+            taskInput.value = '';
+        });
+
+        taskInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                addTaskButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digital Watch and Stopwatch</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #838282;
+        }
+
+        .container {
+            width: 350px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: rgb(110, 110, 110);
+        }
+
+        .clock, .stopwatch {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgb(167, 132, 132);
+            color: white;
+        }
+
+        .time {
+            font-size: 36px;
+            margin: 15px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            color: white;
+            background-color: blue;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Digital Watch</h1>
+
+        <section class="clock">
+            <h2>Current Time</h2>
+            <p class="time" id="clock" aria-live="off">00:00:00</p>
+        </section>
+
+        <section class="stopwatch">
+            <h2>Stopwatch</h2>
+            <p class="time" id="stopwatch" aria-live="off">00:00:00</p>
+
+            <button type="button" id="start">Start</button>
+            <button type="button" id="pause">Pause</button>
+            <button type="button" id="reset">Reset</button>
+        </section>
+    </div>
+    <script>
+        const clock = document.getElementById('clock');
+        // const clock = document.querySelector('#clock')
+
+        setInterval(function () {
+            let date = new Date();
+            clock.innerHTML = date.toLocaleTimeString();
+        }, 1000);
+        
+        
+        </script>
+</body>
+</html>
