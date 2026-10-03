@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+
+    <style>
+        /* These styles make the page easy to read on big and small screens. */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            color: #263449;
+            background: #f3f6fb;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            width: min(100%, 1000px);
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #1d3557;
+        }
+
+        .card {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e6ef;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .student-form,
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        button {
+            min-height: 42px;
+            padding: 9px 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font: inherit;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        input:focus,
+        button:focus-visible {
+            outline: 3px solid #b8cff9;
+            outline-offset: 2px;
+        }
+
+        .form-buttons,
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-buttons {
+            grid-column: 1 / -1;
+        }
+
+        button {
+            border-color: #2865b7;
+            color: white;
+            background: #2865b7;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e4f91;
+        }
+
+        button.secondary {
+            border-color: #cbd5e1;
+            color: #263449;
+            background: white;
+        }
+
+        button.secondary:hover {
+            background: #edf2f8;
+        }
+
+        .statistics {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .stat {
+            padding: 14px;
+            border-radius: 8px;
+            background: #f1f6ff;
+        }
+
+        .stat-label,
+        .stat-value {
+            display: block;
+        }
+
+        .stat-label {
+            margin-bottom: 8px;
+            color: #53637b;
+        }
+
+        .stat-value {
+            overflow-wrap: anywhere;
+            color: #24589f;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 11px;
+            border-bottom: 1px solid #e0e6ef;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f1f4f8;
+        }
+
+        .empty-message {
+            color: #65748a;
+            text-align: center;
+        }
+
+        #form-message {
+            min-height: 1.2em;
+            margin-bottom: 0;
+            color: #247044;
+        }
+
+        #form-message.error {
+            color: #b42318;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 16px;
+            }
+
+            .student-form,
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Student List</h1>
+        <p>Add students, update their details, and see their marks.</p>
+
+        <section class="card" aria-labelledby="form-title">
+            <h2 id="form-title">Add a student</h2>
+
+            <form class="student-form" id="student-form">
+                <div class="field">
+                    <label for="student-id">Student ID</label>
+                    <input id="student-id" type="text" placeholder="For example, 101" required>
+                </div>
+
+                <div class="field">
+                    <label for="student-name">Name</label>
+                    <input id="student-name" type="text" placeholder="Student's name" required>
+                </div>
+
+                <div class="field">
+                    <label for="student-email">Email</label>
+                    <input id="student-email" type="email" placeholder="name@example.com" required>
+                </div>
+
+                <div class="field">
+                    <label for="student-course">Course</label>
+                    <input id="student-course" type="text" placeholder="For example, Science" required>
+                </div>
+
+                <div class="field">
+                    <label for="student-marks">Marks (0 to 100)</label>
+                    <input id="student-marks" type="number" min="0" max="100" step="0.01" required>
+                </div>
+
+                <div class="form-buttons">
+                    <button id="save-button" type="submit">Add student</button>
+                    <button class="secondary" type="reset">Clear form</button>
+                    <button class="secondary" id="cancel-button" type="button" hidden>Cancel edit</button>
+                </div>
+            </form>
+
+            <p id="form-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="card" aria-label="Student statistics">
+            <div class="statistics">
+                <div class="stat">
+                    <span class="stat-label">Number of students</span>
+                    <span class="stat-value" id="student-count">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Average marks</span>
+                    <span class="stat-value" id="average-marks">0.00</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Top student</span>
+                    <span class="stat-value" id="top-student">-</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="list-title">
+            <h2 id="list-title">Students</h2>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Marks</th>
+                            <th scope="col">Result</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const studentForm = document.querySelector("#student-form");
+        const studentList = document.querySelector("#student-list");
+        const formTitle = document.querySelector("#form-title");
+        const formMessage = document.querySelector("#form-message");
+        const saveButton = document.querySelector("#save-button");
+        const cancelButton = document.querySelector("#cancel-button");
+
+        const students = [];
+        const passingMark = 40;
+        let editingIndex = null;
+
+        function readStudentForm() {
+            return {
+                id: document.querySelector("#student-id").value.trim(),
+                name: document.querySelector("#student-name").value.trim(),
+                email: document.querySelector("#student-email").value.trim(),
+                course: document.querySelector("#student-course").value.trim(),
+                marks: document.querySelector("#student-marks").valueAsNumber
+            };
+        }
+
+        // Show a short message below the form.
+        function showMessage(message, isError = false) {
+            formMessage.textContent = message;
+            formMessage.classList.toggle("error", isError);
+        }
+
+        // Make one table cell and safely put text inside it.
+        function addCell(row, text) {
+            const cell = document.createElement("td");
+            cell.textContent = text;
+            row.appendChild(cell);
+            return cell;
+        }
+
+        // Update the three numbers and names above the student table.
+        function updateStatistics() {
+            document.querySelector("#student-count").textContent = students.length;
+
+            if (students.length === 0) {
+                document.querySelector("#average-marks").textContent = "0.00";
+                document.querySelector("#top-student").textContent = "-";
+                return;
+            }
+
+            let totalMarks = 0;
+            let topStudent = students[0];
+
+            for (const student of students) {
+                totalMarks += student.marks;
+
+                if (student.marks > topStudent.marks) {
+                    topStudent = student;
+                }
+            }
+
+            const average = totalMarks / students.length;
+            document.querySelector("#average-marks").textContent = average.toFixed(2);
+            document.querySelector("#top-student").textContent = topStudent.name;
+        }
+
+        // Draw the student table again using the latest list of students.
+        function showStudents() {
+            studentList.textContent = "";
+
+            if (students.length === 0) {
+                const row = document.createElement("tr");
+                const messageCell = addCell(row, "No students yet. Add one using the form above.");
+                messageCell.className = "empty-message";
+                messageCell.colSpan = 7;
+                studentList.appendChild(row);
+                updateStatistics();
+                return;
+            }
+
+            students.forEach(function (student, index) {
+                const row = document.createElement("tr");
+
+                addCell(row, student.id);
+                addCell(row, student.name);
+                addCell(row, student.email);
+                addCell(row, student.course);
+                addCell(row, student.marks);
+                addCell(row, student.marks >= passingMark ? "Passed" : "Not passed");
+
+                const actionsCell = addCell(row, "");
+                actionsCell.className = "actions";
+
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.className = "secondary";
+                editButton.textContent = "Edit";
+                editButton.dataset.action = "edit";
+                editButton.dataset.index = index;
+                editButton.setAttribute("aria-label", "Edit " + student.name);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "secondary";
+                deleteButton.textContent = "Delete";
+                deleteButton.dataset.action = "delete";
+                deleteButton.dataset.index = index;
+                deleteButton.setAttribute("aria-label", "Delete " + student.name);
+
+                actionsCell.appendChild(editButton);
+                actionsCell.appendChild(deleteButton);
+                studentList.appendChild(row);
+            });
+
+            updateStatistics();
+        }
+
+        // Set the form back to its normal "add student" mode.
+        function stopEditing() {
+            editingIndex = null;
+            formTitle.textContent = "Add a student";
+            saveButton.textContent = "Add student";
+            cancelButton.hidden = true;
+        }
+
+        // Put a student's details back into the form so they can be changed.
+        function editStudent(index) {
+            const student = students[index];
+
+            if (!student) {
+                return;
+            }
+
+            editingIndex = index;
+            document.querySelector("#student-id").value = student.id;
+            document.querySelector("#student-name").value = student.name;
+            document.querySelector("#student-email").value = student.email;
+            document.querySelector("#student-course").value = student.course;
+            document.querySelector("#student-marks").value = student.marks;
+
+            formTitle.textContent = "Edit a student";
+            saveButton.textContent = "Save changes";
+            cancelButton.hidden = false;
+            showMessage("Change the details, then choose Save changes.");
+            document.querySelector("#student-id").focus();
+        }
+
+        // Save a new student or save changes to the student being edited.
+        studentForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const student = readStudentForm();
+            const hasEmptyText = !student.id || !student.name || !student.email || !student.course;
+
+            if (hasEmptyText || Number.isNaN(student.marks)) {
+                showMessage("Please fill in every box.", true);
+                return;
+            }
+
+            const idAlreadyUsed = students.some(function (existingStudent, index) {
+                return index !== editingIndex
+                    && existingStudent.id.toLowerCase() === student.id.toLowerCase();
+            });
+
+            if (idAlreadyUsed) {
+                showMessage("That student ID is already in use. Please choose another.", true);
+                return;
+            }
+
+            let message;
+
+            if (editingIndex === null) {
+                students.push(student);
+                message = "Student added.";
+            } else {
+                students[editingIndex] = student;
+                message = "Student details updated.";
+            }
+
+            studentForm.reset();
+            showMessage(message);
+            showStudents();
+        });
+
+        // A form reset also ends editing and clears the old message.
+        studentForm.addEventListener("reset", function () {
+            stopEditing();
+            showMessage("");
+        });
+
+        cancelButton.addEventListener("click", function () {
+            studentForm.reset();
+            showMessage("Edit canceled.");
+        });
+
+        // Handle both Edit and Delete clicks from the student table.
+        studentList.addEventListener("click", function (event) {
+            const clickedButton = event.target.closest("button[data-action]");
+
+            if (!clickedButton) {
+                return;
+            }
+
+            const action = clickedButton.dataset.action;
+            const index = Number(clickedButton.dataset.index);
+
+            if (action === "edit") {
+                editStudent(index);
+                return;
+            }
+
+            if (action === "delete" && students[index]) {
+                students.splice(index, 1);
+
+                if (editingIndex === index) {
+                    studentForm.reset();
+                } else if (editingIndex !== null && editingIndex > index) {
+                    editingIndex -= 1;
+                }
+
+                showMessage("Student deleted.");
+                showStudents();
+            }
+        });
+
+        // Show the empty table and zero statistics when the page first opens.
+        showStudents();
+    </script>
+</body>
+</html>

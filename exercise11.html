@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            color: #222;
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        .panel {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .student-form {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            min-height: 40px;
+            padding: 9px 10px;
+            font: inherit;
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+        }
+
+        button {
+            border: 0;
+            border-radius: 4px;
+            color: white;
+            background-color: #286090;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #204d74;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: end;
+            gap: 8px;
+        }
+
+        .secondary-button {
+            color: #222;
+            background-color: #ddd;
+        }
+
+        .secondary-button:hover {
+            background-color: #ccc;
+        }
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .stat {
+            padding: 14px;
+            background-color: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .stat-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .table-tools {
+            display: grid;
+            grid-template-columns: 1fr 180px;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 11px 10px;
+            border: 1px solid #ddd;
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        .empty-row {
+            color: #555;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 14px;
+            }
+
+            .student-form,
+            .statistics,
+            .table-tools {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                align-items: stretch;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>Student Management System</h1>
+
+        <section class="panel" aria-labelledby="form-heading">
+            <h2 id="form-heading">Add Student</h2>
+            <form class="student-form" id="student-form">
+                <div class="form-field">
+                    <label for="student-id">Student ID : </label>
+                    <input type="text" id="student-id" name="studentId" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="student-name">Name : </label>
+                    <input type="text" id="student-name" name="name" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="student-email">Email : </label>
+                    <input type="email" id="student-email" name="email" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="student-course">Course : </label>
+                    <input type="text" id="student-course" name="course" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="student-marks">Marks</label>
+                    <input type="number" id="student-marks" name="marks" min="0" max="100" step="any" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submit-button">Add Student</button>
+                    <button type="reset" class="secondary-button">Clear</button>
+                </div>
+            </form>
+            <p id="form-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="panel" aria-label="Student statistics">
+            <div class="statistics">
+                <div class="stat">
+                    <span class="stat-label">Total Students</span>
+                    <span class="stat-value" id="total-students">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Average Marks</span>
+                    <span class="stat-value" id="average-marks">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Top Student</span>
+                    <span class="stat-value" id="top-student">-</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" aria-labelledby="students-heading">
+            <h2 id="students-heading">Students</h2>
+            <div class="table-tools">
+                <div class="form-field">
+                    <label for="student-search">Search by name or course</label>
+                    <input type="search" id="student-search" placeholder="Type a name or course">
+                </div>
+                <div class="form-field">
+                    <label for="status-filter">Filter by status</label>
+                    <select id="status-filter">
+                        <option value="all">All</option>
+                        <option value="passed">Passed</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Marks</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list">
+                        <tr>
+                            <td class="empty-row" colspan="7">No students added yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        const storageKey = "studentManagementStudents";
+        const studentForm = document.getElementById("student-form");
+        const studentIdInput = document.getElementById("student-id");
+        const studentNameInput = document.getElementById("student-name");
+        const studentEmailInput = document.getElementById("student-email");
+        const studentCourseInput = document.getElementById("student-course");
+        const studentMarksInput = document.getElementById("student-marks");
+        const formHeading = document.getElementById("form-heading");
+        const submitButton = document.getElementById("submit-button");
+        const formMessage = document.getElementById("form-message");
+        const studentList = document.getElementById("student-list");
+        const searchInput = document.getElementById("student-search");
+        const statusFilter = document.getElementById("status-filter");
+        const totalStudents = document.getElementById("total-students");
+        const averageMarks = document.getElementById("average-marks");
+        const topStudent = document.getElementById("top-student");
+
+        let students = [];
+        let editingStudentId = null;
+
+        function showMessage(message) {
+            formMessage.textContent = message;
+        }
+
+        function isStudentList(value) {
+            if (!Array.isArray(value)) {
+                return false;
+            }
+
+            const ids = new Set();
+            return value.every(function (student) {
+                const marks = Number(student.marks);
+                const validStudent = student &&
+                    typeof student.studentId === "string" &&
+                    student.studentId.trim() !== "" &&
+                    typeof student.name === "string" &&
+                    typeof student.email === "string" &&
+                    typeof student.course === "string" &&
+                    Number.isFinite(marks) &&
+                    marks >= 0 &&
+                    marks <= 100 &&
+                    !ids.has(student.studentId);
+
+                if (validStudent) {
+                    ids.add(student.studentId);
+                }
+
+                return validStudent;
+            });
+        }
+
+        function loadStudents() {
+            try {
+                const savedStudents = localStorage.getItem(storageKey);
+                if (savedStudents === null) {
+                    return [];
+                }
+
+                const parsedStudents = JSON.parse(savedStudents);
+                if (!isStudentList(parsedStudents)) {
+                    throw new Error("Saved student data has an invalid format.");
+                }
+
+                return parsedStudents.map(function (student) {
+                    return {
+                        studentId: student.studentId,
+                        name: student.name,
+                        email: student.email,
+                        course: student.course,
+                        marks: Number(student.marks)
+                    };
+                });
+            } catch (error) {
+                showMessage("Could not load saved students: " + error.message);
+                return [];
+            }
+        }
+
+        function saveStudents(updatedStudents) {
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(updatedStudents));
+                students = updatedStudents;
+                renderStudents();
+                return true;
+            } catch (error) {
+                showMessage("Could not save student records: " + error.message);
+                return false;
+            }
+        }
+
+        function resetForm() {
+            editingStudentId = null;
+            studentIdInput.setCustomValidity("");
+            formHeading.textContent = "Add Student";
+            submitButton.textContent = "Add Student";
+            studentIdInput.disabled = false;
+        }
+
+        function renderStudents() {
+            const searchText = searchInput.value.trim().toLowerCase();
+            const selectedStatus = statusFilter.value;
+            const visibleStudents = students.filter(function (student) {
+                const matchesSearch = student.name.toLowerCase().includes(searchText) ||
+                    student.course.toLowerCase().includes(searchText);
+                const passed = Number(student.marks) >= 50;
+                const matchesStatus = selectedStatus === "all" ||
+                    (selectedStatus === "passed" && passed) ||
+                    (selectedStatus === "failed" && !passed);
+
+                return matchesSearch && matchesStatus;
+            });
+
+            studentList.replaceChildren();
+            if (visibleStudents.length === 0) {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.className = "empty-row";
+                cell.colSpan = 7;
+                cell.textContent = students.length === 0
+                    ? "No students added yet."
+                    : "No students match your search.";
+                row.appendChild(cell);
+                studentList.appendChild(row);
+            } else {
+                visibleStudents.forEach(function (student) {
+                    const row = document.createElement("tr");
+                    const values = [
+                        student.studentId,
+                        student.name,
+                        student.email,
+                        student.course,
+                        String(student.marks),
+                        Number(student.marks) >= 50 ? "Pass" : "Fail"
+                    ];
+
+                    values.forEach(function (value) {
+                        const cell = document.createElement("td");
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                    const actionsCell = document.createElement("td");
+                    const editButton = document.createElement("button");
+                    editButton.type = "button";
+                    editButton.textContent = "Edit";
+                    editButton.dataset.action = "edit";
+                    editButton.dataset.studentId = student.studentId;
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.type = "button";
+                    deleteButton.textContent = "Delete";
+                    deleteButton.dataset.action = "delete";
+                    deleteButton.dataset.studentId = student.studentId;
+
+                    actionsCell.append(editButton, " ", deleteButton);
+                    row.appendChild(actionsCell);
+                    studentList.appendChild(row);
+                });
+            }
+
+            updateStatistics();
+        }
+
+        function updateStatistics() {
+            totalStudents.textContent = String(students.length);
+
+            if (students.length === 0) {
+                averageMarks.textContent = "0";
+                topStudent.textContent = "-";
+                return;
+            }
+
+            const marksTotal = students.reduce(function (total, student) {
+                return total + Number(student.marks);
+            }, 0);
+            averageMarks.textContent = (marksTotal / students.length).toFixed(2);
+
+            const highestMark = Math.max.apply(null, students.map(function (student) {
+                return Number(student.marks);
+            }));
+            const bestStudent = students.find(function (student) {
+                return Number(student.marks) === highestMark;
+            });
+            topStudent.textContent = bestStudent.name + " (" + bestStudent.marks + ")";
+        }
+
+        studentForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            studentIdInput.setCustomValidity("");
+
+            const student = {
+                studentId: studentIdInput.value.trim(),
+                name: studentNameInput.value.trim(),
+                email: studentEmailInput.value.trim(),
+                course: studentCourseInput.value.trim(),
+                marks: Number(studentMarksInput.value)
+            };
+
+            if (!student.studentId || !student.name || !student.email || !student.course) {
+                showMessage("Please fill in every field.");
+                return;
+            }
+
+            if (!studentForm.reportValidity()) {
+                showMessage("Please check the form fields and try again.");
+                return;
+            }
+
+            const duplicateId = students.some(function (existingStudent) {
+                return existingStudent.studentId === student.studentId &&
+                    existingStudent.studentId !== editingStudentId;
+            });
+
+            if (duplicateId) {
+                studentIdInput.setCustomValidity("This student ID is already in use.");
+                studentIdInput.reportValidity();
+                showMessage("Student ID must be unique.");
+                return;
+            }
+
+            let updatedStudents;
+            if (editingStudentId === null) {
+                updatedStudents = students.concat(student);
+            } else {
+                updatedStudents = students.map(function (existingStudent) {
+                    return existingStudent.studentId === editingStudentId ? student : existingStudent;
+                });
+            }
+
+            const wasEditing = editingStudentId !== null;
+            if (saveStudents(updatedStudents)) {
+                studentForm.reset();
+                resetForm();
+                showMessage(wasEditing ? "Student updated." : "Student added.");
+            }
+        });
+
+        studentIdInput.addEventListener("input", function () {
+            studentIdInput.setCustomValidity("");
+        });
+
+        studentForm.addEventListener("reset", function () {
+            resetForm();
+            showMessage("");
+        });
+
+        studentList.addEventListener("click", function (event) {
+            const button = event.target.closest("button[data-action]");
+            if (!button) {
+                return;
+            }
+
+            const studentId = button.dataset.studentId;
+            const student = students.find(function (item) {
+                return item.studentId === studentId;
+            });
+            if (!student) {
+                return;
+            }
+
+            if (button.dataset.action === "edit") {
+                editingStudentId = student.studentId;
+                studentIdInput.value = student.studentId;
+                studentNameInput.value = student.name;
+                studentEmailInput.value = student.email;
+                studentCourseInput.value = student.course;
+                studentMarksInput.value = student.marks;
+                formHeading.textContent = "Edit Student";
+                submitButton.textContent = "Update Student";
+                studentIdInput.focus();
+                showMessage("Update the student details and submit the form.");
+            } else if (button.dataset.action === "delete" &&
+                    window.confirm("Delete student " + student.name + "?")) {
+                const wasEditing = editingStudentId === studentId;
+                if (saveStudents(students.filter(function (item) {
+                    return item.studentId !== studentId;
+                }))) {
+                    if (wasEditing) {
+                        studentForm.reset();
+                    }
+                    showMessage("Student deleted.");
+                }
+            }
+        });
+
+        searchInput.addEventListener("input", renderStudents);
+        statusFilter.addEventListener("change", renderStudents);
+
+        students = loadStudents();
+        renderStudents();
+    </script>
+</body>
+</html>

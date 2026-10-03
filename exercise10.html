@@ -33,7 +33,7 @@
             padding: 10px 15px;
             margin: 5px;
             color: white;
-            background-color: blue;
+            background-color: rgb(5, 5, 5);
             border: none;
             cursor: pointer;
         }
@@ -67,8 +67,43 @@
             let date = new Date();
             clock.innerHTML = date.toLocaleTimeString();
         }, 1000);
-        
-        
-        </script>
+         let startTime = 0, elapsed = 0, running = false;
+        const getSec = () => Math.floor(Date.now() / 1000);
+
+        function update() {
+            // Clock formatted using standard local time string
+            document.getElementById("clock").textContent = new Date().toTimeString().slice(0, 8);
+
+            // Stopwatch formatted using ISO UTC string (00:00:00)
+            let sec = running ? getSec() - startTime : elapsed;
+            document.getElementById("watch").textContent = new Date(sec * 1000).toISOString().slice(11, 19);
+        }
+
+        function start() {
+            if (!running) {
+                startTime = getSec() - elapsed;
+                running = true;
+            }
+        }
+
+        function stop() {
+            if (running) {
+                elapsed = getSec() - startTime;
+                running = false;
+            }
+        }
+
+        function reset() {
+            running = false;
+            elapsed = 0;
+            update();
+        }
+
+        setInterval(update, 200);
+        update();
+    </script>
+
+
+    </script>
 </body>
 </html>
