@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML, CSS & JavaScript Practical Assessment</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+  .container {
+    width: min(1100px, 92%);
+    margin: 40px auto;
+  }
+  header {
+    background: #1f2937;
+    color: white;
+    padding: 35px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+  }
+  header h1 { margin: 0 0 8px; font-size: 32px; }
+  header p { margin: 5px 0; color: #d1d5db; }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 22px;
+  }
+  .info-card {
+    background: rgba(255,255,255,.1);
+    padding: 14px;
+    border-radius: 9px;
+  }
+  .info-card strong { display: block; color: #fff; }
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.06);
+  }
+  .question-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  .question-title h2 { margin: 0; color: #111827; }
+  .badge {
+    background: #e5e7eb;
+    color: #374151;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  h3 { margin-top: 25px; color: #374151; }
+  ul { padding-left: 24px; }
+  li { margin: 7px 0; }
+  code {
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+  }
+  .output {
+    background: #f8fafc;
+    border: 1px solid #dbe2ea;
+    border-left: 5px solid #6b7280;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+  }
+  .mockup {
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+    margin-top: 15px;
+  }
+  .mock-header {
+    background: #f3f4f6;
+    padding: 12px 16px;
+    font-weight: bold;
+  }
+  .mock-content { padding: 16px; }
+  .mock-form {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+  .mock-input {
+    border: 1px solid #cbd5e1;
+    color: #9ca3af;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+  .mock-button {
+    background: #374151;
+    color: white;
+    border: 0;
+    padding: 8px 13px;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .stat {
+    background: #f3f4f6;
+    padding: 12px;
+    border-radius: 7px;
+    text-align: center;
+  }
+  .stat strong { display: block; font-size: 20px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 9px;
+    text-align: left;
+  }
+  th { background: #f3f4f6; }
+  .note {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  .criteria {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .criterion {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 15px;
+    background: #fafafa;
+  }
+  footer {
+    text-align: center;
+    color: #6b7280;
+    padding: 15px;
+  }
+  @media (max-width: 800px) {
+    .info-grid, .criteria { grid-template-columns: repeat(2, 1fr); }
+    .mock-form { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: 1fr; }
+    .question-title { align-items: flex-start; flex-direction: column; }
+    .section { padding: 20px; }
+  }
+  @media (max-width: 500px) {
+    .info-grid, .criteria { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>HTML, CSS & JavaScript Practical Assessment</h1>
+  <p>CRUD Operations — Student Management & Inventory Management</p>
+
+  <div class="info-grid">
+    <div class="info-card"><strong>Technologies</strong>HTML, CSS, JavaScript</div>
+    <div class="info-card"><strong>Difficulty</strong>Moderate to Advanced</div>
+    <div class="info-card"><strong>Total Questions</strong>2</div>
+    <div class="info-card"><strong>Frameworks</strong>Not Allowed</div>
+  </div>
+</header>
+
+<div class="section">
+  <h2>General Instructions</h2>
+  <ul>
+    <li>Use only <strong>HTML, CSS and Vanilla JavaScript</strong>.</li>
+    <li>Do not use React, Bootstrap, Tailwind CSS or other frameworks/libraries.</li>
+    <li>Use <code>localStorage</code> to persist data.</li>
+    <li>CRUD operations should happen without reloading the page.</li>
+    <li>Validate user input before adding or updating records.</li>
+    <li>Keep the code properly structured, readable and maintainable.</li>
+    <li>The final application should be responsive and user-friendly.</li>
+  </ul>
+</div>
+
+<section class="section">
+  <div class="question-title">
+    <h2>Question 1 — Student Management System</h2>
+    <span class="badge">CRUD + Search + Filter + Statistics</span>
+  </div>
+
+  <p>
+    Create a <strong>Student Management System</strong> using HTML, CSS and JavaScript.
+    The application must implement complete <strong>CRUD operations</strong> for student records.
+  </p>
+
+  <h3>Student Fields</h3>
+  <ul>
+    <li>Student ID</li>
+    <li>Student Name</li>
+    <li>Email</li>
+    <li>Course</li>
+    <li>Marks</li>
+  </ul>
+
+  <h3>Required Functionality</h3>
+
+  <p><strong>1. CREATE — Add Student</strong></p>
+  <ul>
+    <li>Create a form containing all student fields.</li>
+    <li>All fields are required.</li>
+    <li>Student ID must be unique.</li>
+    <li>Email must be validated.</li>
+    <li>Marks must be between 0 and 100.</li>
+    <li>Clicking <strong>Add Student</strong> should add the record to the table.</li>
+  </ul>
+
+  <p><strong>2. READ — Display Students</strong></p>
+  <p>The student table should contain:</p>
+  <ul>
+    <li>ID</li>
+    <li>Name</li>
+    <li>Email</li>
+    <li>Course</li>
+    <li>Marks</li>
+    <li>Status</li>
+    <li>Actions</li>
+  </ul>
+  <ul>
+    <li>Status should show <strong>Pass</strong> if marks are 50 or above.</li>
+    <li>Status should show <strong>Fail</strong> if marks are below 50.</li>
+    <li>Each record must have <strong>Edit</strong> and <strong>Delete</strong> buttons.</li>
+  </ul>
+
+  <p><strong>3. UPDATE — Edit Student</strong></p>
+  <ul>
+    <li>Clicking Edit should populate the form with the selected student's data.</li>
+    <li>The Add Student button should change to <strong>Update Student</strong>.</li>
+    <li>After updating, the table and statistics should refresh automatically.</li>
+  </ul>
+
+  <p><strong>4. DELETE — Remove Student</strong></p>
+  <ul>
+    <li>Clicking Delete should ask for confirmation.</li>
+    <li>After confirmation, remove the student from the table and storage.</li>
+  </ul>
+
+  <p><strong>5. Search and Filter</strong></p>
+  <ul>
+    <li>Add a search box to search by student name or course.</li>
+    <li>Search results should update while typing.</li>
+    <li>Add filters: <strong>All / Passed / Failed</strong>.</li>
+  </ul>
+
+  <p><strong>6. Statistics</strong></p>
+  <ul>
+    <li>Total Students</li>
+    <li>Average Marks</li>
+    <li>Top Student</li>
+  </ul>
+
+  <p><strong>7. Data Persistence</strong></p>
+  <ul>
+    <li>Store student records in <code>localStorage</code>.</li>
+    <li>Records should remain available after refreshing or reopening the browser.</li>
+  </ul>
+
+  <h3>Expected Output</h3>
+  <div class="output">
+    <p>Your page should contain a student form, statistics section, search/filter controls and a student table.</p>
+
+    <div class="mockup">
+      <div class="mock-header">Student Management System</div>
+      <div class="mock-content">
+        <div class="mock-form">
+          <div class="mock-input">Student ID</div>
+          <div class="mock-input">Student Name</div>
+          <div class="mock-input">Email</div>
+          <div class="mock-input">Course</div>
+          <div class="mock-input">Marks</div>
+        </div>
+        <button class="mock-button">Add Student</button>
+
+        <div class="stats">
+          <div class="stat"><strong>3</strong>Total Students</div>
+          <div class="stat"><strong>68.3</strong>Average Marks</div>
+          <div class="stat"><strong>Rahul</strong>Top Student</div>
+        </div>
+
+        <p>
+          Search: <span class="mock-input">Search by name or course...</span>
+          &nbsp; Filter: <strong>All | Passed | Failed</strong>
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Email</th><th>Course</th>
+              <th>Marks</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>S101</td><td>Rahul</td><td>rahul@example.com</td>
+              <td>BCA</td><td>85</td><td>Pass</td><td>Edit / Delete</td>
+            </tr>
+            <tr>
+              <td>S102</td><td>Anita</td><td>anita@example.com</td>
+              <td>BSc</td><td>72</td><td>Pass</td><td>Edit / Delete</td>
+            </tr>
+            <tr>
+              <td>S103</td><td>Kiran</td><td>kiran@example.com</td>
+              <td>BCA</td><td>48</td><td>Fail</td><td>Edit / Delete</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p><strong>Interaction flow expected:</strong></p>
+    <p>
+      Add Student → Student appears in table → Edit Student → Update record →
+      Search/Filter → Delete Student → Confirm deletion → Record removed.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="question-title">
+    <h2>Question 2 — Inventory Management System</h2>
+    <span class="badge">CRUD + Search + Filter + Quantity Controls</span>
+  </div>
+
+  <p>
+    Create an <strong>Inventory Management System</strong> using HTML, CSS and JavaScript.
+    The application must implement complete <strong>CRUD operations</strong> for products.
+  </p>
+
+  <h3>Product Fields</h3>
+  <ul>
+    <li>Product ID</li>
+    <li>Product Name</li>
+    <li>Category</li>
+    <li>Price</li>
+    <li>Quantity</li>
+  </ul>
+
+  <h3>Required Functionality</h3>
+
+  <p><strong>1. CREATE — Add Product</strong></p>
+  <ul>
+    <li>Create a form containing all product fields.</li>
+    <li>All fields are required.</li>
+    <li>Product ID must be unique.</li>
+    <li>Price cannot be negative.</li>
+    <li>Quantity cannot be negative.</li>
+    <li>Clicking <strong>Add Product</strong> should add the product to the table.</li>
+  </ul>
+
+  <p><strong>2. READ — Display Products</strong></p>
+  <p>The inventory table should contain:</p>
+  <ul>
+    <li>Product ID</li>
+    <li>Product Name</li>
+    <li>Category</li>
+    <li>Price</li>
+    <li>Quantity</li>
+    <li>Status</li>
+    <li>Inventory Value</li>
+    <li>Actions</li>
+  </ul>
+
+  <ul>
+    <li>Inventory Value = <code>Price × Quantity</code>.</li>
+    <li>Quantity 0 → <strong>Out of Stock</strong>.</li>
+    <li>Quantity 1–4 → <strong>Low Stock</strong>.</li>
+    <li>Quantity 5 or more → <strong>Available</strong>.</li>
+  </ul>
+
+  <p><strong>3. UPDATE — Edit Product</strong></p>
+  <ul>
+    <li>Clicking Edit should populate the form with the selected product.</li>
+    <li>The Add Product button should change to <strong>Update Product</strong>.</li>
+    <li>Product ID should remain unique.</li>
+    <li>After updating, the table and statistics should refresh automatically.</li>
+  </ul>
+
+  <p><strong>4. DELETE — Remove Product</strong></p>
+  <ul>
+    <li>Clicking Delete should ask for confirmation.</li>
+    <li>After confirmation, remove the product from the table and storage.</li>
+  </ul>
+
+  <p><strong>5. Search and Category Filter</strong></p>
+  <ul>
+    <li>Add a search box to search by product name.</li>
+    <li>Search results should update while typing.</li>
+    <li>Add a category filter with:
+      <strong>All Categories / Electronics / Clothing / Food / Other</strong>.
+    </li>
+  </ul>
+
+  <p><strong>6. Quantity Controls</strong></p>
+  <ul>
+    <li>Provide <strong>+</strong> and <strong>−</strong> controls for product quantity.</li>
+    <li>Quantity must never become negative.</li>
+    <li>Status and inventory value must update automatically.</li>
+    <li>Statistics must also update automatically.</li>
+  </ul>
+
+  <p><strong>7. Statistics</strong></p>
+  <ul>
+    <li>Total Products</li>
+    <li>Total Inventory Value</li>
+    <li>Low Stock Products</li>
+  </ul>
+
+  <p><strong>8. Data Persistence</strong></p>
+  <ul>
+    <li>Store product records in <code>localStorage</code>.</li>
+    <li>Records should remain available after refreshing or reopening the browser.</li>
+  </ul>
+
+  <h3>Expected Output</h3>
+  <div class="output">
+    <p>Your page should contain a product form, statistics section, search/filter controls and an inventory table.</p>
+
+    <div class="mockup">
+      <div class="mock-header">Inventory Management System</div>
+      <div class="mock-content">
+        <div class="mock-form">
+          <div class="mock-input">Product ID</div>
+          <div class="mock-input">Product Name</div>
+          <div class="mock-input">Category</div>
+          <div class="mock-input">Price</div>
+          <div class="mock-input">Quantity</div>
+        </div>
+        <button class="mock-button">Add Product</button>
+
+        <div class="stats">
+          <div class="stat"><strong>5</strong>Total Products</div>
+          <div class="stat"><strong>₹12,450</strong>Total Inventory Value</div>
+          <div class="stat"><strong>2</strong>Low Stock Products</div>
+        </div>
+
+        <p>
+          Search: <span class="mock-input">Search product...</span>
+          &nbsp; Category: <strong>All Categories</strong>
+        </p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Product</th><th>Category</th><th>Price</th>
+              <th>Quantity</th><th>Status</th><th>Inventory Value</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>P101</td><td>Laptop</td><td>Electronics</td>
+              <td>₹50,000</td><td>7 (+ / −)</td><td>Available</td>
+              <td>₹3,50,000</td><td>Edit / Delete</td>
+            </tr>
+            <tr>
+              <td>P102</td><td>T-Shirt</td><td>Clothing</td>
+              <td>₹600</td><td>3 (+ / −)</td><td>Low Stock</td>
+              <td>₹1,800</td><td>Edit / Delete</td>
+            </tr>
+            <tr>
+              <td>P103</td><td>Notebook</td><td>Other</td>
+              <td>₹80</td><td>0 (+ / −)</td><td>Out of Stock</td>
+              <td>₹0</td><td>Edit / Delete</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p><strong>Interaction flow expected:</strong></p>
+    <p>
+      Add Product → Product appears in table → Increase/Decrease quantity →
+      Status/value/statistics update → Edit Product → Update record →
+      Search/Filter → Delete Product → Confirm deletion.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Evaluation Criteria</h2>
+  <div class="criteria">
+    <div class="criterion"><strong>HTML — 20%</strong><br>Structure, forms, tables and semantic elements.</div>
+    <div class="criterion"><strong>CSS — 20%</strong><br>Layout, styling, responsiveness and usability.</div>
+    <div class="criterion"><strong>JavaScript — 50%</strong><br>CRUD, validation, search, filters, calculations and localStorage.</div>
+    <div class="criterion"><strong>UX — 10%</strong><br>Clear interactions, feedback and user-friendly design.</div>
+  </div>
+
+  <div class="note">
+    <strong>Important:</strong> This page contains only the questions and expected output.
+    Students are expected to implement the complete solution themselves.
+  </div>
+</section>
+
+<footer>
+  HTML • CSS • JavaScript Practical Assessment
+</footer>
+
+</div>
+</body>
+</html>
