@@ -247,93 +247,74 @@
                     <h2 id="explanation-title">What's Happening?</h2>
                     <ul>
                         <li><strong>No page reload</strong> - React updates the counter in place.</li>
-                        <li><strong>Counter persists</strong> - the backend saves the count between page loads.</li>
+                        <li><strong>Counter persists</strong> - this browser saves the count between page loads.</li>
                         <li><strong>Session details</strong> - the timestamp and random number are generated on each page load.</li>
-                        <li><strong>Fast updates</strong> - the display refreshes after the server saves each change.</li>
+                        <li><strong>Fast updates</strong> - the display refreshes immediately after each change.</li>
                     </ul>
                 </section>
             );
         }
 
-        function getRequestErrorMessage(requestError) {
-            if (requestError instanceof TypeError) {
-                return "Cannot connect to the counter backend. In the reactjs folder, run `node server.js`, then open http://localhost:3000.";
-            }
-
-            return requestError.message;
-        }
-
         function CounterApp() {
-            const [counter, setCounter] = useState(null);
+            const [counter, setCounter] = useState(() => {
+                const savedCounter = window.localStorage.getItem("react-counter-value");
+                return savedCounter === null ? 0 : Number(savedCounter);
+            });
             const [clicks, setClicks] = useState(0);
             const [timestamp] = useState(() => new Date());
             const [randomNumber] = useState(() => Math.floor(Math.random() * 1000));
             const [bump, setBump] = useState(false);
-            const [loading, setLoading] = useState(true);
-            const [busy, setBusy] = useState(false);
             const [error, setError] = useState("");
             const time = timestamp.toLocaleTimeString([], { hour12: false });
 
-            async function loadCounter() {
-                setLoading(true);
-                setError("");
-
-                try {
-                    const response = await fetch("/api/counter");
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || "Could not load the counter.");
-                    setCounter(data.counter);
-                } catch (requestError) {
-                    setError(getRequestErrorMessage(requestError));
-                } finally {
-                    setLoading(false);
-                }
-            }
-
             useEffect(() => {
-                loadCounter();
-            }, []);
-
-            async function handleAction(action) {
-                setBusy(true);
-                setError("");
-
                 try {
-                    const response = await fetch("/api/counter", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action }),
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || "Could not save the counter.");
-                    setCounter(data.counter);
-                    setClicks(value => value + 1);
-                    setBump(true);
-                    window.setTimeout(() => setBump(false), 200);
-                } catch (requestError) {
-                    setError(getRequestErrorMessage(requestError));
-                } finally {
-                    setBusy(false);
+                    window.localStorage.setItem("react-counter-value", String(counter));
+                    setError("");
+                } catch {
+                    setError("Could not save the counter in this browser.");
                 }
+            }, [counter]);
+
+            function updateCounter(newCounter) {
+                if (!Number.isSafeInteger(newCounter)) {
+                    setError("Counter reached its supported limit.");
+                    return;
+                }
+
+                setCounter(newCounter);
+                setClicks(clicks + 1);
+                setBump(true);
+                window.setTimeout(() => setBump(false), 200);
             }
 
-            const controlsDisabled = loading || busy || counter === null;
+            function incrementCounter() {
+                updateCounter(counter + 1);
+            }
+
+            function decrementCounter() {
+                updateCounter(counter - 1);
+            }
+
+            function resetCounter() {
+                updateCounter(0);
+            }
 
             return (
                 <main className="container">
                     <h1>React Counter</h1>
                     <p className="subtitle">Your count is saved across page reloads.</p>
-                    <div className="success">The backend saves the counter after every change.</div>
+                    <div className="success">This browser saves the counter after every change.</div>
                     {error && (
                         <div className="error-message" role="alert">
-                            {error} {counter === null && <button onClick={loadCounter}>Retry</button>}
+                            {error}
                         </div>
                     )}
-                    <CounterDisplay value={loading ? "..." : counter ?? "Unavailable"} bump={bump} />
+                    <CounterDisplay value={counter} bump={bump} />
                     <div className="counter-controls">
-                        <button onClick={() => handleAction("decrement")} disabled={controlsDisabled} aria-label="Decrement counter">-</button>
-                        <button onClick={() => handleAction("reset")} disabled={controlsDisabled}>Reset</button>
-                        <button onClick={() => handleAction("increment")} disabled={controlsDisabled} aria-label="Increment counter">+</button>
+                        <button onClick={decrementCounter} aria-label="Decrement counter">-</button>
+                        <button onClick={resetCounter}>Reset</button>
+                        <button onClick={incrementCounter} aria-label="Increment counter">+</button>
                     </div>
                     <ReloadProof time={time} randomNumber={randomNumber} clicks={clicks} />
                     <Explanation />
@@ -348,3 +329,32 @@
     </script>
 </body>
 </html>
+
+<!--
+Think of React state as the counter’s working value in memory, and localStorage as a small
+notebook the browser keeps between page loads. React state alone would be lost on reload.
+This code reads the notebook when the app starts, then writes the count back whenever it changes. 
+1. Read the saved count at startup
+        const [counter, setCounter] = useState(() => {
+            const savedCounter = window.localStorage.getItem("react-counter-value");
+            return savedCounter === null ? 0 : Number(savedCounter);
+        });
+     When the page reloads, React creates CounterApp again and runs this initializer. If 
+     the browser has saved "7", Number(savedCounter) converts it to the number 7, so 
+     the counter starts at 7. It starts at 0 only when there is no saved value yet.   
+
+2. Save whenever the count changes
+        useEffect(() => {
+            window.localStorage.setItem("react-counter-value", String(counter));
+        }, [counter]);
+    The [counter] part tells React to run this effect when counter changes. localStorage
+    stores text, so String(counter) converts the number to text before saving it.  
+
+3. Change the count without reloading  
+The + button calls incrementCounter, which updates React state. React then redraws the 
+displayed number; the browser does not reload the page. After the change, the effect saves
+the new value. The decrement and reset buttons follow the same path, with reset changing 
+the count to 0.
+
+So, if the count is 7, the browser saves "7". A reload clears the old React state, but not the browser’s saved value; the new app instance reads "7" and starts there. The saved count belongs to this browser and page origin; the session click count, timestamp, and random number are separate and start fresh after reload.
+-->
